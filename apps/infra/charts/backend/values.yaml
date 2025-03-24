@@ -1,0 +1,10 @@
+replicaCount: 1
+image:
+  repository: <your-ecr-url>/backend
+  tag: latest
+service:
+  type: ClusterIP
+  port: 3000
+ingress:
+  enabled: true
+  host: backend.yourdomain.com

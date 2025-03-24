@@ -1,0 +1,28 @@
+{
+  "name": "frontend",
+  "$schema": "../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "apps/frontend",
+  "projectType": "application",
+  "tags": [],
+  "// targets": "to see all targets run: nx show project frontend --web",
+  "targets": {
+    "docker:build": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "docker build -t your-ecr-url/frontend -f apps/frontend/Dockerfile ."
+      }
+    },
+    "docker:push": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "docker push your-ecr-url/frontend"
+      }
+    },
+    "helm:deploy": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "helm upgrade --install frontend ./apps/infra/charts/frontend -f apps/infra/charts/frontend/values.yaml"
+      }
+    }
+  }
+}

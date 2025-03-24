@@ -1,0 +1,10 @@
+replicaCount: 1
+image:
+  repository: <your-ecr-url>/frontend
+  tag: latest
+service:
+  type: ClusterIP
+  port: 3000
+ingress:
+  enabled: true
+  host: frontend.yourdomain.com

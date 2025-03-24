@@ -1,0 +1,61 @@
+{
+  "name": "backend",
+  "$schema": "../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "apps/backend/src",
+  "projectType": "application",
+  "tags": [],
+  "targets": {
+    "build": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "webpack-cli build",
+        "args": ["node-env=production"]
+      },
+      "configurations": {
+        "development": {
+          "args": ["node-env=development"]
+        }
+      }
+    },
+    "serve": {
+      "executor": "@nx/js:node",
+      "defaultConfiguration": "development",
+      "dependsOn": ["build"],
+      "options": {
+        "buildTarget": "backend:build",
+        "runBuildTargetDependencies": false
+      },
+      "configurations": {
+        "development": {
+          "buildTarget": "backend:build:development"
+        },
+        "production": {
+          "buildTarget": "backend:build:production"
+        }
+      }
+    },
+    "test": {
+      "options": {
+        "passWithNoTests": true
+      }
+    },
+    "docker:build": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "docker build -t your-ecr-url/backend -f apps/backend/Dockerfile ."
+      }
+    },
+    "docker:push": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "docker push your-ecr-url/backend"
+      }
+    },
+    "helm:deploy": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "helm upgrade --install backend ./apps/infra/charts/backend -f apps/infra/charts/backend/values.yaml"
+      }
+    }
+  }
+}

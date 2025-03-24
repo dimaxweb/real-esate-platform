@@ -1,0 +1,3 @@
+name: real-estate-infra
+runtime: nodejs
+description: EKS cluster for real estate platform# Placeholder for Pulumi.yaml
