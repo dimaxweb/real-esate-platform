@@ -7,3 +7,134 @@ datasource db {
   provider = "postgresql"
   url      = env("DATABASE_URL")
 }
+
+model agents {
+  id          Int          @id @default(autoincrement())
+  user_id     Int?
+  agency_name Json
+  phone       String?      @db.VarChar(20)
+  created_at  DateTime?    @default(now()) @db.Timestamp(6)
+  updated_at  DateTime?    @default(now()) @db.Timestamp(6)
+  users       users?       @relation(fields: [user_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
+  properties  properties[]
+}
+
+/// The underlying table does not contain a valid unique identifier and can therefore currently not be handled by Prisma Client.
+model citiesandstreets {
+  id          Int      @default(autoincrement())
+  city_name   String?  @db.VarChar
+  city_id     Decimal? @db.Decimal(15, 2)
+  street_name String?  @db.VarChar
+  street_id   Decimal? @db.Decimal(15, 2)
+
+  @@ignore
+}
+
+model clients {
+  id           Int         @id @default(autoincrement())
+  user_id      Int?
+  is_potential Boolean?    @default(true)
+  created_at   DateTime?   @default(now()) @db.Timestamp(6)
+  updated_at   DateTime?   @default(now()) @db.Timestamp(6)
+  users        users?      @relation(fields: [user_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
+  inquiries    inquiries[]
+}
+
+model featuredproperties {
+  id                 Int         @id @default(autoincrement())
+  property_id        Int?
+  feature_start_date DateTime    @db.Timestamp(6)
+  feature_end_date   DateTime    @db.Timestamp(6)
+  created_at         DateTime?   @default(now()) @db.Timestamp(6)
+  updated_at         DateTime?   @default(now()) @db.Timestamp(6)
+  properties         properties? @relation(fields: [property_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
+}
+
+model inquiries {
+  id                Int       @id @default(autoincrement())
+  client_id         Int?
+  message           Json?
+  inquiry_date      DateTime? @default(now()) @db.Timestamp(6)
+  property_location Json?
+  min_price         Decimal?  @db.Decimal(15, 2)
+  max_price         Decimal?  @db.Decimal(15, 2)
+  number_of_rooms   Int?
+  created_at        DateTime? @default(now()) @db.Timestamp(6)
+  updated_at        DateTime? @default(now()) @db.Timestamp(6)
+  clients           clients?  @relation(fields: [client_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
+}
+
+model leads {
+  id         Int       @id @default(autoincrement())
+  name       Json
+  email      String    @db.VarChar(100)
+  phone      String?   @db.VarChar(20)
+  message    Json?
+  created_at DateTime? @default(now()) @db.Timestamp(6)
+  updated_at DateTime? @default(now()) @db.Timestamp(6)
+}
+
+/// This table contains check constraints and requires additional setup for migrations. Visit https://pris.ly/d/check-constraints for more info.
+model properties {
+  id                 Int                  @id @default(autoincrement())
+  title              Json
+  description        Json?
+  min_price          Decimal              @db.Decimal(15, 2)
+  max_price          Decimal              @db.Decimal(15, 2)
+  number_of_rooms    Int
+  bathrooms          Int
+  area               Decimal              @db.Decimal(10, 2)
+  listing_type       String               @db.VarChar(10)
+  status             String               @db.VarChar(20)
+  agent_id           Int?
+  pictures           Json?
+  videos             Json?
+  year_built         Int?
+  parking_spaces     Int?
+  lot_size           Decimal?             @db.Decimal(10, 2)
+  floor_number       Int?
+  amenities          Json?
+  property_type      Json?
+  created_at         DateTime?            @default(now()) @db.Timestamp(6)
+  updated_at         DateTime?            @default(now()) @db.Timestamp(6)
+  featuredproperties featuredproperties[]
+  agents             agents?              @relation(fields: [agent_id], references: [id], onUpdate: NoAction)
+  propertyaddress    propertyaddress[]
+  wishlist           wishlist[]
+}
+
+model propertyaddress {
+  id            Int         @id @default(autoincrement())
+  property_id   Int?
+  address_line1 Json
+  address_line2 Json?
+  city          Json
+  state         Json
+  country       Json
+  postal_code   String      @db.VarChar(20)
+  created_at    DateTime?   @default(now()) @db.Timestamp(6)
+  updated_at    DateTime?   @default(now()) @db.Timestamp(6)
+  properties    properties? @relation(fields: [property_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
+}
+
+model users {
+  id            Int        @id @default(autoincrement())
+  name          Json
+  email         String     @unique @db.VarChar(100)
+  password_hash String     @db.VarChar(255)
+  created_at    DateTime?  @default(now()) @db.Timestamp(6)
+  updated_at    DateTime?  @default(now()) @db.Timestamp(6)
+  agents        agents[]
+  clients       clients[]
+  wishlist      wishlist[]
+}
+
+model wishlist {
+  id          Int         @id @default(autoincrement())
+  user_id     Int?
+  property_id Int?
+  created_at  DateTime?   @default(now()) @db.Timestamp(6)
+  updated_at  DateTime?   @default(now()) @db.Timestamp(6)
+  properties  properties? @relation(fields: [property_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
+  users       users?      @relation(fields: [user_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
+}
