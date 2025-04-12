@@ -1,28 +1,118 @@
 {
   "name": "frontend",
-  "$schema": "../../node_modules/nx/schemas/project-schema.json",
-  "sourceRoot": "apps/frontend",
   "projectType": "application",
-  "tags": [],
-  "// targets": "to see all targets run: nx show project frontend --web",
+  "root": "apps/frontend",
+  "sourceRoot": "apps/frontend/src",
   "targets": {
-    "docker:build": {
-      "executor": "nx:run-commands",
+    "build": {
+      "executor": "@nx/next:build",
+      "outputs": ["{options.outputPath}"],
       "options": {
-        "command": "docker build -t your-ecr-url/frontend -f apps/frontend/Dockerfile ."
+        "root": "apps/frontend",
+        "outputPath": "dist/apps/frontend"
+      },
+      "configurations": {
+        "production": {
+          "dev": false
+        },
+        "development": {
+          "dev": true
+        }
       }
     },
-    "docker:push": {
-      "executor": "nx:run-commands",
+    "serve": {
+      "executor": "@nx/next:server",
       "options": {
-        "command": "docker push your-ecr-url/frontend"
+        "buildTarget": "frontend:build",
+        "dev": true,
+        "port": 4200
+      },
+      "configurations": {
+        "production": {
+          "dev": false,
+          "port": 3000
+        }
       }
     },
-    "helm:deploy": {
+    "export": {
+      "executor": "@nx/next:export",
+      "options": {
+        "buildTarget": "frontend:build",
+        "outputPath": "dist/static"
+      }
+    },
+    "lint": {
+      "executor": "@nx/linter:eslint",
+      "outputs": ["{options.outputFile}"],
+      "options": {
+        "lintFilePatterns": ["apps/frontend/**/*.{ts,tsx,js,jsx}"]
+      }
+    },
+    "test": {
+      "executor": "@nx/jest:jest",
+      "outputs": ["coverage/apps/frontend"],
+      "options": {
+        "jestConfig": "apps/frontend/jest.config.ts",
+        "passWithNoTests": true
+      }
+    },
+    "analyze": {
+      "executor": "@nx/next:build",
+      "options": {
+        "outputPath": "dist/apps/frontend",
+        "root": "apps/frontend",
+        "analyze": true
+      }
+    },
+    "preview": {
+      "executor": "@nx/next:start",
+      "options": {
+        "buildTarget": "frontend:build:production"
+      }
+    },
+    "docker-build": {
       "executor": "nx:run-commands",
       "options": {
-        "command": "helm upgrade --install frontend ./apps/infra/charts/frontend -f apps/infra/charts/frontend/values.yaml"
+        "command": "docker build -t real-estate-frontend -f apps/frontend/Dockerfile ."
+      }
+    },
+    "docker-run": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "docker run -p 3000:3000 real-estate-frontend"
+      }
+    },
+    "help": {
+      "executor": "nx:run-commands",
+      "options": {
+        "commands": [
+          {
+            "command": "echo '🛠 Nx Frontend Help'",
+            "forwardAllArgs": false
+          },
+          {
+            "command": "echo 'nx serve frontend              - Run dev server on port 4200'",
+            "forwardAllArgs": false
+          },
+          {
+            "command": "echo 'nx build frontend              - Build the frontend app'",
+            "forwardAllArgs": false
+          },
+          {
+            "command": "echo 'nx preview frontend            - Serve production build (next start)'",
+            "forwardAllArgs": false
+          },
+          {
+            "command": "echo 'nx docker-build frontend        - Build Docker image'",
+            "forwardAllArgs": false
+          },
+          {
+            "command": "echo 'nx docker-run frontend          - Run container at http://localhost:3000'",
+            "forwardAllArgs": false
+          }
+        ]
       }
     }
-  }
+  },
+  "tags": []
 }

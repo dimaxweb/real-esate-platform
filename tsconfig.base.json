@@ -8,13 +8,14 @@
     "emitDecoratorMetadata": true,
     "experimentalDecorators": true,
     "importHelpers": true,
-    "target": "es2015",
+    "target": "es2020",
     "module": "esnext",
     "lib": ["es2020", "dom"],
     "skipLibCheck": true,
     "skipDefaultLibCheck": true,
     "baseUrl": ".",
     "paths": {
+      "@real-estate-platform/api": ["libs/api/src/index.ts"],
       "@real-estate-platform/common": ["libs/common/src/index.ts"]
     }
   },

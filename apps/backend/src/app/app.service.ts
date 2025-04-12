@@ -1,12 +1,15 @@
 import { Injectable } from '@nestjs/common';
-import {agents, properties, prisma, PrismaPromise} from "../../../../libs/nx-prisma-db-lib/libs/db/src/client";
+import { properties, PrismaService } from '@real-estate-platform/api';
 
 @Injectable()
 export class AppService {
+  constructor(private readonly prisma: PrismaService) {
+
+  }
   getData(): { message: string } {
     return {message : 'Hello World!'}
   }
-  getProperties () : PrismaPromise<properties[]> {
-    return prisma.properties.findMany();
+  getProperties () : Promise<properties[]> {
+    return this.prisma.properties.findMany();
   }
 }
