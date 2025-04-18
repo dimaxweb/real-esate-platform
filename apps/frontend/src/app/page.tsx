@@ -2,7 +2,7 @@
 
 import styles from './page.module.scss';
 import { SortDropdown } from './SortDropdown';
-import { Sorting } from './types';
+import { Sorting } from '../../../../libs/common/src/lib/types';
 import { PropertySearchPage } from './PropertySearchPage';
 
 export default function Index() {

@@ -1,6 +1,6 @@
 // PropertySearchPage.tsx
 import React, { useState,useEffect} from 'react';
-import { Pagination, Sorting, SortField, SortOrder } from './types';
+import { Pagination, Sorting, SortField, SortOrder } from '@real-estate-platform/common'
 import { PropertyCard } from './PropertyCard';
 import { SortDropdown } from './SortDropdown';
 import { PaginationControls } from './PaginationControls';
@@ -35,8 +35,8 @@ export const PropertySearchPage: React.FC = () => {
     const res = await fetch(`/api/properties?${queryString}`);
     const data = await res.json();
 
-    setProperties(data.items);
-    setTotalCount(data.totalCount);
+    setProperties(data.items || []);
+    setTotalCount(data.totalCount || 0);
   };
 
   useEffect(() => {

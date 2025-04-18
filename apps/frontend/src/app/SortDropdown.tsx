@@ -1,6 +1,6 @@
 'use client'
 
-import {SortField, Sorting} from "./types";
+import {SortField, Sorting} from "../../../../libs/common/src/lib/types";
 
 export const SortDropdown: React.FC<{
   sorting: Sorting;

@@ -11,7 +11,15 @@ const nextConfig = {
     // Set this to true if you would like to use SVGR
     // See: https://github.com/gregberge/svgr
     svgr: false,
-  }
+  },
+  async rewrites() {
+    return [
+      {
+        source: '/api/:path*',
+        destination: 'http://localhost:3000/api/:path*', // Your backend URL
+      },
+    ];
+  },
 };
 
 const plugins = [
